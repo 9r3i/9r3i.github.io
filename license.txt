@@ -1,0 +1,64 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                            License
+                       (Private License)
+                        Authored by 9r3i
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            This software is under license of 9r3i
+                    https://github.com/9r3i
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+  This license is a legal agreement between you and 9r3i, for
+  the use of this private software. By obtaining the software
+  you agree to be bound by the terms and conditions of this 
+  license. 9r3i reserves the right to alter this agreement at
+  any time for any reason and without notice.
+
+  Permitted Use
+
+  You are allowed to use but not to copy nor modify nor 
+  distribute the software without permission from 9r3i.
+
+  This software is not free nor for sale. This software is
+  for private function and private only.
+
+  Display of Copyright Notices
+
+  Copyright information, attribution, proprietary notices
+  and logos which are displayed to the software section may
+  not be removed. All notices within the software source-code
+  and license file must remain intact.
+
+  Indemnity
+
+  You agree to indemnify and hold harmless 9r3i for any
+  third-party claims, actions or suits, as well as any 
+  related expenses, liabilities, damages, settlements or fees
+  arising from your use or misuse of the software, or a
+  violation of any terms of this license.
+
+  Disclaimer Of Warranty
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+  KIND, EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+  WARRANTIES OF QUALITY, PERFORMANCE, NON-INFRINGEMENT,
+  MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+  FURTHER, 9R3I DOES NOT WARRANT THAT THE SOFTWARE OR ANY
+  RELATED SERVICE WILL ALWAYS BE AVAILABLE.
+
+  Limitations Of Liability
+
+  YOU ASSUME ALL RISK ASSOCIATED WITH THE INSTALLATION AND
+  USE OF THE SOFTWARE. IN NO EVENT SHALL THE AUTHORS OR
+  COPYRIGHT HOLDERS OF THE SOFTWARE BE LIABLE FOR CLAIMS,
+  DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN
+  CONNECTION WITH THE SOFTWARE. LICENSE HOLDERS ARE SOLELY
+  RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USE AND
+  ASSUME ALL RISKS ASSOCIATED WITH ITS USE, INCLUDING BUT NOT
+  LIMITED TO THE RISKS OF PROGRAM ERRORS, DAMAGE TO
+  EQUIPMENT, LOSS OF DATA OR SOFTWARE PROGRAMS, OR 
+  UNAVAILABILITY OR INTERRUPTION OF OPERATIONS.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                 Copyright (c) 2012-2021, 9r3i
+                    https://github.com/9r3i
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
