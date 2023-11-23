@@ -17,7 +17,7 @@
     "gaino.js": "libs/gaino.min.js",
     "router.js": "libs/router.min.js",
     "parser.js": "libs/parser.min.js",
-    "blog.js": "libs/blog.js",
+    "blog.js": "libs/blog.min.js",
     "loader.txt": "libs/loader.txt",
     "sample.js": "libs/sample.js"
   },
@@ -41,7 +41,8 @@
   "config": {
     "blog": {
       "save": true,
-      "default": "BlogDatabaseDriver"
+      "default": "BlogDatabaseDriver",
+      "performTest": false
     },
     "database": {
       "driver": "BlogDatabaseDriver",
@@ -61,13 +62,13 @@
       "host": "themes",
       "namespace": "plain",
       "templates": {
-        "footer": "templates/footer.js",
+        "footer": "templates/footer.min.js",
         "main": "templates/main.html"
       },
       "save": true,
       "files": [
-        "plain.css",
-        "plain.js"
+        "plain.min.css",
+        "plain.min.js"
       ]
     }
   }

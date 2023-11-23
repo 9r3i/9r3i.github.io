@@ -6,7 +6,7 @@ scode=document.querySelector('pre[class="site-code"]'),
 reloada=document.querySelector('a[id="site-reload"]');
 if(scode){
   scode.onclick=function(){
-    //this.parentNode.removeChild(scode);
+    /* this.parentNode.removeChild(scode); */
   }
 }
 if(sresult&&sinput&&stotal&&stitle){

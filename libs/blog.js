@@ -11,10 +11,10 @@
  *   - parser.js  - https://github.com/9r3i/parser     - v1.2.6
  *   - 
  *   - 
- *   - github api (free) -- module
- *   - firebase (free)   -- module
- *   - api (self building) -- needs more time
- *   - ldb, kdb, sdb       -- cannot get into public
+ *   - github api (module)     -- free
+ *   - firebase (module)       -- free
+ *   - api (self building)     -- needs more time to build
+ *   - ldb, kdb, sdb (self library) -- ready
  *   - sse (server send event) -- needs a server
  *   - ws (websocket)          -- needs a vps
  */
@@ -55,9 +55,9 @@ this.init=async function(a,b,c){
     window.location.pathname
       .replace(/^\//,'')
       .replace(/[^\/]+$/,''),
-    {}, // _GLOBAL
-    [], // header
-    []  // footer
+    {}, /* _GLOBAL */
+    [], /* header */
+    []  /* footer */
   );
   /* initialize data */
   let rawData=await app.get(this.config.database.name),
@@ -127,7 +127,9 @@ this.init=async function(a,b,c){
     window._GLOBAL.data=data;
   }
   /* perform testing output */
-  //this.test(...arguments);
+  if(this.config.blog.performTest){
+    this.test(...arguments);
+  }
 };
 /* request data */
 this.requestData=async function(table){
@@ -188,7 +190,7 @@ this.loader=function(str,cent){
   document.body.innerHTML='';
   document.body.appendChild(pre);
   return pre;
-}
+};
 /* loader image */
 this.loaderImage=function(){
   let img=new Image;
@@ -202,15 +204,24 @@ this.loaderURL=function(){
 };
 };
 
+
 /**
  * BlogDatabaseDriver
- * ~ blog database driver -- github api
+ * ~ blog database driver
  * authored by 9r3i
  * https://github.com/9r3i
  * started at november 22nd 2023
- * @usage: new BlogDatabaseDriver(config.database)
+ * @usage: new BlogDatabaseDriver(config object,blog object)
  * 
- * @[sample:config]
+ * [acceptable:host]
+ * - api.github.com/repos (releases method, 30 rows per page)
+ * - raw.githubusercontent.com (file method)
+ * - relfo.vercel.app (release file method)
+ * - sabunjelly.com (query method: kdb, ldb, sdb, jdb)
+ * - 9r3i.web.id (query method: expired)
+ * - 
+ * 
+ * [sample:config]
   {
     "database": {
       "driver": "BlogDatabaseDriver",
@@ -267,15 +278,15 @@ this.request=async function(table){
     res=await this.blog.gaino.fetch(url,opt),
     data=this.blog.gaino.parseJSON(res);
     return data;
-  }//*/
+  }
   /* browser fetch */
   else if(this.config.fetch=='browser'){
     let res=await fetch(url,{})
       .then(r=>r.json())
       .catch(e=>prompt(e,url));
     return res;
-  }//*/
-  /* no fetch */
+  }
+  /* no fetch method */
   else{
     alert('Error: Requires database fetch.');
     return false;

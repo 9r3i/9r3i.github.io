@@ -7,7 +7,7 @@
  , continued at october 10th 2019 - version 2.0.1 --> fix query parsing
  , continued at november 21st 2024 - version 2.0.2 --> fix comments
  , continued at november 22nd 2024 - version 2.1.0 --> fix method .replace to full eval all string inside the brackets
- , @replacement global variables:
+ , @replacement global letiables:
  ,   --> _GLOBAL = object of global environment
  ,   --> _ROUTER = object of loaded router
  ,   --> _GET    = object of global _GET query fro URI component
@@ -21,7 +21,7 @@
  */
 ;function router(path,globEnv,head,foot){
 /* router version */
-this.version='2.1.0';
+this.version='2.1.1';
 /* router basepath -- window.location.pathname */
 path=typeof path==='string'?path:'/';
 path=path.substr(0,1)!='/'?'/'+path:path;
@@ -39,13 +39,13 @@ this.footers=[];
 head=Array.isArray(head)?head:[];
 foot=Array.isArray(foot)?foot:[];
 /* set header global execution */
-for(var i=0;i<head.length;i++){
+for(let i=0;i<head.length;i++){
   if(typeof head[i]==='function'){
     this.headers.push(head[i]);
   }
 }
 /* set footer global execution */
-for(var i=0;i<foot.length;i++){
+for(let i=0;i<foot.length;i++){
   if(typeof foot[i]==='function'){
     this.footers.push(foot[i]);
   }
@@ -74,7 +74,7 @@ this.routes=[];
  */
 this.__proto__.addBunch=function(data){
   if(!Array.isArray(data)){return false;}
-  for(var i=0;i<data.length;i++){
+  for(let i=0;i<data.length;i++){
     this.add.apply(this.add,data[i]);
   }return true;
 };
@@ -101,11 +101,11 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
   funcs=typeof funcs==='object'&&funcs!==null?funcs:{};
   env==typeof env==='object'&&env!==null?env:{};
   /* prepare default output route to push */
-  var output=[path,title];
+  let output=[path,title];
   /* prepare callback environment, 
    * add path, title, functions, content, selector and enviroment
    */
-  var newEnv={
+  let newEnv={
     path:path,
     title:title,
     content:content,
@@ -114,7 +114,7 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
     env:env,
   };
   /* parse func one by one */
-  for(var i in funcs){
+  for(let i in funcs){
     try{
       newEnv.func[i]=eval('(function(_get,_this,_env){'+funcs[i]+'})');
     }catch(e){
@@ -135,7 +135,7 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
     window._FUNC=_env.func;
     /* execute global headers */
     if(Array.isArray(_this.headers)){
-      for(var i=0;i<_this.headers.length;i++){
+      for(let i=0;i<_this.headers.length;i++){
         if(typeof _this.headers[i]==='function'){
           _this.headers[i].call(_this.headers[i],_get,_this,_env);
         }
@@ -147,9 +147,9 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
       _env.func.header(_get,_this,_env);
     }
     /* prepare content replacement */
-    var newContent=_this.replace(_env.content);
+    let newContent=_this.replace(_env.content);
     /* put content into selector element */
-    var el=document.querySelector(_env.select);
+    let el=document.querySelector(_env.select);
     if(el){el.innerHTML=newContent;}
     /* replace all anchors */
     _this.anchor();
@@ -160,7 +160,7 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
     }
     /* execute global footers */
     if(Array.isArray(_this.footers)){
-      for(var i=0;i<_this.footers.length;i++){
+      for(let i=0;i<_this.footers.length;i++){
         if(typeof _this.footers[i]==='function'){
           _this.footers[i].call(_this.footers[i],_get,_this,_env);
         }
@@ -179,19 +179,19 @@ this.__proto__.add=function(path,title,content,select,funcs,env){
  */
 this.__proto__.anchor=function(){
   /* get all anchors */
-  var ans=document.querySelectorAll('a:not([target="_blank"])');
+  let ans=document.querySelectorAll('a:not([target="_blank"])');
   /* parse them all */
-  var _this=this;
-  for(var i=0;i<ans.length;i++){
+  let _this=this;
+  for(let i=0;i<ans.length;i++){
     ans[i].onclick=function(e){
       /* prevent default action */
       e.preventDefault();
       /* get href attribute */
-      var href=this.getAttribute('href');
+      let href=this.getAttribute('href');
       if(typeof href!=='string'){return false;}
       /* check href baseurl */
-      var baseLength=_this.baseurl.length;
-      var isBaseURL=href.substr(0,baseLength)===_this.baseurl?true:false;
+      let baseLength=_this.baseurl.length;
+      let isBaseURL=href.substr(0,baseLength)===_this.baseurl?true:false;
       if(href.match(/^https?:\/\//i)&&!isBaseURL){
         return _this.go(href,true);
       }
@@ -209,7 +209,7 @@ this.__proto__.anchor=function(){
  */
 this.__proto__.init=function(){
   /* prepare this object */
-  var _this=this;
+  let _this=this;
   /* using events.js */
   if(window.hasOwnProperty('WINDOW_EVENTS')){
     WINDOW_EVENTS.onpopstate.push(function(){
@@ -223,12 +223,10 @@ this.__proto__.init=function(){
     };
   }
   /* prepare object default */
-  var odef={
-    path:window.location.pathname.substr(this.basepath.length),
-    fullpath:path+window.location.search+window.location.hash
-  };
+  let path=window.location.pathname.substr(this.basepath.length),
+  fullpath=path+window.location.search+window.location.hash;
   /* go to current path */
-  window.history.pushState(odef,odef.path,odef.fullpath);
+  window.history.pushState({path,fullpath},path,fullpath);
   /* return the change */
   return this.change();
 };
@@ -239,9 +237,9 @@ this.__proto__.init=function(){
  */
 this.__proto__.change=function(){
   /* prepare pathname */
-  var path=window.location.pathname.substr(this.basepath.length);
+  let path=window.location.pathname.substr(this.basepath.length);
   /* prepare fullpath */
-  var fullpath=path+window.location.search+window.location.hash;
+  let fullpath=path+window.location.search+window.location.hash;
   /* execute full path */
   return this.exec(fullpath);
 };
@@ -275,19 +273,19 @@ this.__proto__.go=function(path,blank){
 this.__proto__.exec=function(path){
   /* prepare path */
   path=typeof path==='string'?path:'';
-  var p=path.split('?')[0];
+  let p=path.split('?')[0];
   /* set error as false */
   this.error(false);
   /* check route is exist */
-  var r=this.route(p);
+  let r=this.route(p);
   if(typeof r!=='object'||r===null){
-    var error='Not Found';
+    let error='Not Found';
     this.title('404 '+error);
     return this.error(error,404);
   }
   /* check call function */
   if(!r.call||typeof r.call!=='function'){
-    var error='Missing Function';
+    let error='Missing Function';
     this.title('400 '+error);
     return this.error(error,400);
   }
@@ -296,7 +294,7 @@ this.__proto__.exec=function(path){
     this.title(r.title);
   }
   /* prepare query */
-  var query=this.query(path.substr(p.length+1).split('#')[0]);
+  let query=this.query(path.substr(p.length+1).split('#')[0]);
   /* execute call function */
   return r.call.call(r.call,query,this,r.env);
 };
@@ -315,7 +313,7 @@ this.__proto__.replace=function(c){
     try{
       return eval(m);
     }catch(e){
-      alert('[error:eval] '+e+'\n\n'+c);
+      alert('[error:eval] '+e+'\n\n'+m);
     }
   });
 };
@@ -326,9 +324,9 @@ this.__proto__.replace=function(c){
  */
 this.__proto__.title=function(s){
   s=typeof s==='string'?s:'';
-  var t=document.getElementsByTagName('title');
+  let t=document.getElementsByTagName('title');
   if(t.length>0){
-    for(var i=0;i<t.length;i++){
+    for(let i=0;i<t.length;i++){
       t[i].innerText=s;
     }
   }else{
@@ -344,8 +342,8 @@ this.__proto__.title=function(s){
  * @return: object of route, contain: path, title and call function
  */
 this.__proto__.route=function(p){
-  var r=false;
-  for(var i in this.routes){
+  let r=false;
+  for(let i in this.routes){
     if(!Array.isArray(this.routes[i])
       ||this.routes[i].length<3){
       continue;
@@ -354,7 +352,7 @@ this.__proto__.route=function(p){
       &&typeof this.routes[i][1]==='string'
       &&typeof this.routes[i][2]==='function'
       &&this.routes[i][0]===p){
-      var env={};
+      let env={};
       if(typeof this.routes[i][3]==='object'
         &&this.routes[i][3]!==null){
         env=this.routes[i][3]
@@ -377,16 +375,16 @@ this.__proto__.route=function(p){
  * @return: print out genetated error statement into document.body
  */
 this.__proto__.error=function(s,c){
-  var id='router-error-statement';
-  var n=document.getElementById(id);
+  let id='router-error-statement';
+  let n=document.getElementById(id);
   if(n){n.parentElement.removeChild(n);}
   if(s===false){return false;}
   s=typeof s==='string'?s:'Unknown Error';
   c=c%1===0?c:200;
   n=document.createElement('div');
   n.id=id;
-  var sp=document.createElement('div');
-  var sd=document.createElement('div');
+  let sp=document.createElement('div');
+  let sd=document.createElement('div');
   n.style.margin='0px';
   n.style.padding='30px';
   n.style.textAlign='center';
@@ -422,15 +420,15 @@ this.__proto__.error=function(s,c){
  */
 this.__proto__.query=function(t){
   if(typeof t!=='string'){return false;}
-  var s=t.split('&');
-  var r={},c={};
-  for(var i=0;i<s.length;i++){
+  let s=t.split('&');
+  let r={},c={};
+  for(let i=0;i<s.length;i++){
     if(!s[i]||s[i]==''){continue;}
-    var p=s[i].split('=');
-    var k=decodeURIComponent(p[0]);
+    let p=s[i].split('=');
+    let k=decodeURIComponent(p[0]);
     if(k.match(/\[(.*)?\]$/g)){
-      var l=k.replace(/\[(.*)?\]$/g,'');
-      var w=k.replace(/^.*\[(.*)?\]$/g,"$1");
+      let l=k.replace(/\[(.*)?\]$/g,'');
+      let w=k.replace(/^.*\[(.*)?\]$/g,"$1");
       c[l]=c[l]?c[l]:0;
       if(w==''){w=c[l];c[l]+=1;}
       if(!r[l]){r[l]={};}

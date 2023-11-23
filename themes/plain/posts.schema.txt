@@ -1,0 +1,41 @@
+
+/*
+
+
+[database schema]
+host: https://relfo.vercel.app
+user: 9r3i
+name: gaino-blog-data
+table: posts
+file: data.json
+
+sample url:
+https://relfo.vercel.app/9r3i/gaino-blog-data/posts/data.json
+
+[posts:row]:id
+id
+title
+content
+time
+tag (table for assets)
+author -- 9r3i
+authorURL
+assets -- object
+
+[assets]:name
+name
+type
+size
+time
+tag (table)
+url -- download url
+downloaded -- download_count
+relfo:join:/
+  host:https://relfo.vercel.app
+  username:
+  name:
+  tag: (table)
+  name:
+
+
+*/

@@ -1,56 +1,34 @@
-/* swt global site */
+/* start the theme */
+new Plain;
+
+
+/**
+ * plain
+ * basic caller
+ */
+;function Plain(){
+this.version='1.0.0';
+this.init=function(){
+
+if(typeof _GLOBAL==='undefined'){
+  return alert('Error: Requires gaino blog.');
+}
+
+/* set global site */
 _GLOBAL.site={
   name:document.querySelector('title').textContent,
   description:document.querySelector('meta[name="description"]').content,
 };
 
-/* prepare global posts -- default */
-_GLOBAL.posts=_GLOBAL.data;
-_GLOBAL.total=Object.keys(_GLOBAL.data).length;
-
 /* prepare global posts -- release method */
-if(_BLOG.db.config.host=='https://api.github.com/repos'){
 _GLOBAL.posts={};
-_GLOBAL.total=0;
-for(let post of Object.values(_GLOBAL.data)){
-  if(post.tag_name.match(/^\d+\.\d+\.\d+$/)){
-    continue;
-  }
-  let assets={};
-  for(let asset of post.assets){
-    assets[asset.name]={
-      name:asset.name,
-      type:asset.content_type,
-      size:asset.size,
-      time:asset.created_at,
-      tag:post.tag_name,
-      url:asset.browser_download_url,
-      downloaded:asset.download_count,
-      relfo:[
-          'https://relfo.vercel.app',
-          _BLOG.db.config.username,
-          _BLOG.db.config.name,
-          post.tag_name,
-          asset.name,
-        ].join('/'),
-    };
-  }
-  _GLOBAL.posts[post.id]={
-    id:post.id,
-    title:post.name,
-    content:post.body,
-    time:post.created_at,
-    draft:post.draft,
-    tag:post.tag_name,
-    author:post.author.login,
-    authorID:post.author.id,
-    authorPicture:post.author.avatar_url,
-    authorURL:post.author.html_url,
-    assets,
-  };
-  _GLOBAL.total++;
+if(_BLOG.db.config.host=='https://api.github.com/repos'){
+  _GLOBAL.posts=(new PlainHelper).dataPosts(_GLOBAL.data);
+}else{
+  /* prepare global posts -- default */
+  _GLOBAL.posts=_GLOBAL.data;
 }
-}//===[end of release method]===*/
+_GLOBAL.total=Object.keys(_GLOBAL.posts).length;
 
 /* prepare tags */
 _GLOBAL.tags=(new PlainHelper).tags(_GLOBAL.posts);
@@ -87,7 +65,20 @@ _BLOG.route.add(
     footer:_GLOBAL.templates.footer,
   },
   /* environment */
-  {
+  new PlainTheme
+);
+};
+return this.init();
+}; /*===[end of plain]===*/
+
+
+/**
+ * plain theme
+ * object _ENV
+ */
+;function PlainTheme(){
+  this.version='1.0.0';
+  return {
     detail:function(){
       if(_GET.hasOwnProperty('tag')){
         return 'Total: '+_ENV.tagCount()+' posts';
@@ -140,7 +131,7 @@ _BLOG.route.add(
       }else if(_GET.hasOwnProperty('recent')){
         return _ENV.main();
       }else if(_GET.hasOwnProperty('reload')){
-        return '';
+        return '<progress></progress>';
       }else if(!_GET.hasOwnProperty('id')){
         return _GLOBAL.tags.html;
       }
@@ -261,22 +252,70 @@ _BLOG.route.add(
       return parse.likeJSON(...arguments);
     },
   }
-);
+};
 
-/* plain helper */
+
+/**
+ * plain helper
+ * requires: _BLOG object
+ */
 ;function PlainHelper(){
 this.version='1.0.0';
 window._PlainHelper=this;
+
+this.dataPosts=function(data){
+let posts={};
+for(let post of Object.values(data)){
+  if(post.hasOwnProperty('tag_name')
+    &&post.tag_name.match(/^\d+\.\d+\.\d+$/)){
+    continue;
+  }
+  let assets={};
+  for(let asset of post.assets){
+    assets[asset.name]={
+      name:asset.name,
+      type:asset.content_type,
+      size:asset.size,
+      time:asset.created_at,
+      tag:post.tag_name,
+      url:asset.browser_download_url,
+      downloaded:asset.download_count,
+      relfo:[
+          'https://relfo.vercel.app',
+          _BLOG.db.config.username,
+          _BLOG.db.config.name,
+          post.tag_name,
+          asset.name,
+        ].join('/'),
+    };
+  }
+  posts[post.id]={
+    id:post.id,
+    title:post.name,
+    content:post.body,
+    time:post.created_at,
+    draft:post.draft,
+    tag:post.tag_name,
+    author:post.author.login,
+    authorID:post.author.id,
+    authorPicture:post.author.avatar_url,
+    authorURL:post.author.html_url,
+    assets,
+  };
+}
+return posts;
+};
 this.tags=function(posts){
-  var tags={},tagName='#islam',tagsByName=[],
+  let tags={},tagName='#islam',tagsByName=[],
   tagsHTML=document.createElement('div');
   tagsHTML.classList.add('tags-content');
-  for(var i in posts){
-    var match=posts[i].content.match(/#[a-z0-9_]+/ig);
-    if(!match){continue;}
-    var postID=posts[i].id;
-    for(var e=0;e<match.length;e++){
-      tagName=match[e].toLowerCase();
+  for(let i in posts){
+    if(typeof posts[i].content!=='string'){continue;}
+    let akur=posts[i].content.match(/#[a-z0-9_]+/ig);
+    if(!akur){continue;}
+    let postID=posts[i].id;
+    for(let e=0;e<akur.length;e++){
+      tagName=akur[e].toLowerCase();
       if(tagsByName.indexOf(tagName)<0){
         tagsByName.push(tagName);
       }
@@ -288,8 +327,8 @@ this.tags=function(posts){
     }
   }
   tagsByName.sort();
-  for(var e=0;e<tagsByName.length;e++){
-    var i=tagsByName[e],
+  for(let e=0;e<tagsByName.length;e++){
+    let i=tagsByName[e],
     an=document.createElement('a'),
     space=document.createTextNode(' ');
     an.classList.add('tag-count-'+this.tagClass(tags[i].length));
@@ -467,7 +506,7 @@ this.htmlBlob=function(data,type){
   type=typeof type==='string'?type:'text/html';
   let blob=new Blob([data],{type}),
   url=window.URL.createObjectURL(blob);
-  //window.URL.revokeObjectURL(url);
+  /* window.URL.revokeObjectURL(url); */
   return url;
 };
 this.htmlBase=function(link){
