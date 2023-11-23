@@ -37,6 +37,12 @@ if(sresult&&sinput&&stotal&&stitle){
     _BLOG.route.title(rtitle+' \xb7  '+_GLOBAL.site.name);
   };
 }else if(_GET.hasOwnProperty('reload')){
+  let helper=new PlainHelper,
+  durl=helper.htmlBlob(JSON.stringify(_GLOBAL.posts),'octet/stream'),
+  dload=confirm('Download data?');
+  if(dload){
+    window.open(durl,'_blank');
+  }
   localStorage.clear();
   if(stitle){
     stitle.style.color='#b33';

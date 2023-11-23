@@ -92,7 +92,7 @@ this.stream=function(url,cb,cnf){
         &&cnf.data!==null?cnf.data:{},
   hd=cnf.hasOwnProperty('headers')
         &&typeof cnf.headers==='object'
-        &&cnf.headers!==null?hd:{},
+        &&cnf.headers!==null?cnf.headers:{},
   up=cnf.hasOwnProperty('upload')
         &&typeof cnf.upload==='function'
         ?cnf.upload:function(){},
@@ -114,7 +114,7 @@ this.stream=function(url,cb,cnf){
   query=this.buildQuery(dt),
   qmark=url.match(/\?/)?'&':'?',
   uri=mtd=='GET'?url+qmark+query:url,
-  temp=false;
+  temp=null;
   xhr.open(mtd,uri,true);
   hd['Content-type']='application/x-www-form-urlencoded';
   for(var i in hd){xhr.setRequestHeader(i,hd[i]);}
@@ -132,7 +132,7 @@ this.stream=function(url,cb,cnf){
       return false;
     }return er(err+'\n\n'+hds,xhr,hds);
   };
-  xhr.send(mtd=='GET'?null:query);
+  xhr.send(mtd=='GET'?temp:query);
   return xhr;
 };
 /* buildQuery v2, build http query recusively */

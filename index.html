@@ -45,11 +45,17 @@
     },
     "database": {
       "driver": "BlogDatabaseDriver",
-      "host": "localhost",
+      "host": "https://api.github.com/repos",
       "username": "9r3i",
-      "password": "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",
+      "password": "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",
       "name": "gaino-blog-data",
-      "expires": "Fri, Nov 22 2024"
+      "tables": {
+        "posts": "releases",
+        "authors": "releases/authors.json"
+      },
+      "file": null,
+      "fetch": "browser",
+      "expires": "Fri, Nov 23 2024"
     },
     "theme": {
       "host": "themes",
@@ -84,8 +90,8 @@ window.addEventListener('error',function(e){
 (async function(vc){
   /* clear the storage -- for development only *
   localStorage.clear();//*/
-  /* testing */
-  if(0){return;}
+  /* exit statement -- for splash screen development only *
+  if(true){return;}//*/
   /* standard virtual initialization -- do not change */
   let vname='virtual.js',
   vtag=document.getElementById(vname),

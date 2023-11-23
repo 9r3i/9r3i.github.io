@@ -4,10 +4,15 @@ _GLOBAL.site={
   description:document.querySelector('meta[name="description"]').content,
 };
 
-/* prepare global posts */
+/* prepare global posts -- default */
+_GLOBAL.posts=_GLOBAL.data;
+_GLOBAL.total=Object.keys(_GLOBAL.data).length;
+
+/* prepare global posts -- release method */
+if(_BLOG.db.config.host=='https://api.github.com/repos'){
 _GLOBAL.posts={};
 _GLOBAL.total=0;
-for(let post of _GLOBAL.data){
+for(let post of Object.values(_GLOBAL.data)){
   if(post.tag_name.match(/^\d+\.\d+\.\d+$/)){
     continue;
   }
@@ -45,6 +50,7 @@ for(let post of _GLOBAL.data){
   };
   _GLOBAL.total++;
 }
+}//===[end of release method]===*/
 
 /* prepare tags */
 _GLOBAL.tags=(new PlainHelper).tags(_GLOBAL.posts);
@@ -457,8 +463,9 @@ this.fullscreen=function(btn){
     fr.requestFullscreen();
   }
 };
-this.htmlBlob=function(data){
-  let blob=new Blob([data],{type:'text/html'}),
+this.htmlBlob=function(data,type){
+  type=typeof type==='string'?type:'text/html';
+  let blob=new Blob([data],{type}),
   url=window.URL.createObjectURL(blob);
   //window.URL.revokeObjectURL(url);
   return url;

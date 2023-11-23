@@ -45,12 +45,11 @@ this.init=async function(a,b,c){
     app.delete('blog.js');
   }
   /* put loader */
-  this.loader('Loading... [blog:components]',20);
   /* initialize database */
   let driver=this.config.database.driver
     &&typeof window[this.config.database.driver]==='function'
     ?this.config.database.driver:'BlogDatabaseDriver';
-  this.db=new window[driver](this.config.database);
+  this.db=new window[driver](this.config.database,this);
   /* initialize router */
   this.route=new router(
     window.location.pathname
@@ -65,7 +64,6 @@ this.init=async function(a,b,c){
   isUpdated=false,
   data=this.gaino.parseJSON(rawData);
   if(!data){
-    this.loader('Loading... [request:data]',30);
     data=await this.requestData();
     app.put(this.config.database.name,JSON.stringify(data));
     isUpdated=true;
@@ -132,17 +130,9 @@ this.init=async function(a,b,c){
   //this.test(...arguments);
 };
 /* request data */
-this.requestData=async function(){
-  let page=1,
-  limit=100,
-  data=[];
-  for(let i=page;i<limit;i++){
-    let tdata=await this.db.request(i);
-    data=[...data,...tdata];
-    if(tdata.length<30){
-      break;
-    }
-  }return data;
+this.requestData=async function(table){
+  let data=await this.db.request(table);
+  return data&&typeof data==='object'?data:{};
 };
 /* testing code */
 this.test=function(a,b,c){
@@ -221,80 +211,78 @@ this.loaderURL=function(){
  * @usage: new BlogDatabaseDriver(config.database)
  * 
  * @[sample:config]
- {
+  {
     "database": {
       "driver": "BlogDatabaseDriver",
-      "host": "localhost",
+      "host": "https://raw.githubusercontent.com",
       "username": "9r3i",
       "password": "___GITHUB_PUBLIC_TOKEN___",
       "name": "gaino-blog-data",
-      "expires": "Fri, Nov 22 2024"
+      "tables": {
+        "posts": "master/posts.json",
+        "authors": "master/authors.json"
+      },
+      "file": false,
+      "fetch": "browser",
+      "expires": "Fri, Nov 23 2024"
     }
   }
  */
-;function BlogDatabaseDriver(cnf){
+;function BlogDatabaseDriver(cnf,blg){
 /* the version */
 Object.defineProperty(this,'version',{
   value:'1.0.0',
   writable:false,
 });
-/* default host */
-Object.defineProperty(this,'host',{
-  value:'https://api.github.com/repos',
-  writable:false,
-});
-/* config */
+/* config and blog */
 this.config=cnf;
+this.blog=blg;
 /* initialize -- as constructor */
 this.init=function(){
 
 };
-/* request by id */
-this.requestByID=async function(id,table){
-  table=typeof table==='string'?table:'releases';
+/* request */
+this.request=async function(table){
+  table=typeof table==='string'
+    &&this.config.tables.hasOwnProperty(table)
+    ?table:'posts';
   let path=[
-    this.host,
+    this.config.host,
     this.config.username,
     this.config.name,
-    table
+    this.config.tables[table],
   ];
-  if(id){path.push(id);}
-  let url=path.join('/'),
-  opt={
-    headers:{
-      "Authorization": "Bearer "+this.config.password,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "Accept": "application/vnd.github+json",
-    }
-  },
-  res=await fetch(url,opt)
-    .then(r=>r.json())
-    .catch(e=>e.json());
-  return res;
-};
-/* request by page */
-this.request=async function(page,table){
-  table=typeof table==='string'?table:'releases';
-  let path=[
-    this.host,
-    this.config.username,
-    this.config.name,
-    table
-  ];
-  let url=path.join('/')+(page?'?page='+page:''),
-  opt={
-    headers:{
-      "Authorization": "Bearer "+this.config.password,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "Accept": "application/vnd.github+json",
-    }
-  },
-  res=await fetch(url,opt)
-    .then(r=>r.json())
-    .catch(e=>e.json());
-  return res;
+  if(this.config.file){
+    path.push(this.config.file);
+  }
+  let url=path.join('/');
+  /* gaino.xhr fetch */
+  if(this.config.fetch=='xhr'
+    ||this.config.fetch=='gaino'){
+    let opt={
+      error:function(e){
+        prompt(e,url);
+      }
+    },
+    res=await this.blog.gaino.fetch(url,opt),
+    data=this.blog.gaino.parseJSON(res);
+    return data;
+  }//*/
+  /* browser fetch */
+  else if(this.config.fetch=='browser'){
+    let res=await fetch(url,{})
+      .then(r=>r.json())
+      .catch(e=>prompt(e,url));
+    return res;
+  }//*/
+  /* no fetch */
+  else{
+    alert('Error: Requires database fetch.');
+    return false;
+  }
 };
 /* initialize */
 return this.init();
 };
+
 
