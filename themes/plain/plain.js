@@ -133,7 +133,12 @@ return this.init();
       }else if(_GET.hasOwnProperty('reload')){
         return '<progress></progress>';
       }else if(!_GET.hasOwnProperty('id')){
-        return _GLOBAL.tags.html;
+        let helper=new PlainHelper,
+        content=_BLOG.config.theme.mainContent;
+        return '<pre class="post-home-content">'
+          +helper.contentLink(content)
+          +'</pre>'
+          +'<pre>'+_GLOBAL.tags.html+'</pre>';
       }
       let post=_GLOBAL.posts[_GET.id]
         ?_GLOBAL.posts[_GET.id]:false;

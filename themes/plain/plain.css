@@ -118,6 +118,10 @@ a#site-reload{
 .post-content{
   
 }
+.post-home-content{
+  margin:5px 0px 50px;
+  padding:0px;
+}
 .post-each{
   margin:10px 0px;
 }
