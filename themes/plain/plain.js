@@ -134,11 +134,13 @@ return this.init();
         return '<progress></progress>';
       }else if(!_GET.hasOwnProperty('id')){
         let helper=new PlainHelper,
-        content=_BLOG.config.theme.mainContent;
-        return '<pre class="post-home-content">'
+        tagName=_BLOG.config.theme.mainTagName,
+        content=_GLOBAL.mainPosts.hasOwnProperty(tagName)
+          ?_GLOBAL.mainPosts[tagName].content:'';
+        return '<pre>'+_GLOBAL.tags.html+'</pre>'
+          +'<pre class="post-home-content">'
           +helper.contentLink(content)
-          +'</pre>'
-          +'<pre>'+_GLOBAL.tags.html+'</pre>';
+          +'</pre>';
       }
       let post=_GLOBAL.posts[_GET.id]
         ?_GLOBAL.posts[_GET.id]:false;
@@ -262,7 +264,7 @@ return this.init();
 
 /**
  * plain helper
- * requires: _BLOG object
+ * requires: _GLOBAL and _BLOG object
  */
 ;function PlainHelper(){
 this.version='1.0.0';
@@ -271,10 +273,8 @@ window._PlainHelper=this;
 this.dataPosts=function(data){
 let posts={};
 for(let post of Object.values(data)){
-  if(post.hasOwnProperty('tag_name')
-    &&post.tag_name.match(/^\d+\.\d+\.\d+$/)){
-    continue;
-  }
+  _GLOBAL.mainPosts=_GLOBAL.hasOwnProperty('mainPosts')
+    ?_GLOBAL.mainPosts:{};
   let assets={};
   for(let asset of post.assets){
     assets[asset.name]={
@@ -307,6 +307,11 @@ for(let post of Object.values(data)){
     authorURL:post.author.html_url,
     assets,
   };
+  if(post.hasOwnProperty('tag_name')
+    &&post.tag_name.match(/^\d+\.\d+\.\d+$/)){
+    _GLOBAL.mainPosts[post.tag_name]=posts[post.id];
+    delete posts[post.id];
+  }
 }
 return posts;
 };

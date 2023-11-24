@@ -21,7 +21,7 @@
 ;function blog(g,v){
 /* this site */
 this.site={
-  version:2311241348
+  version:2311241438
 };
 /* the version */
 Object.defineProperty(this,'version',{
