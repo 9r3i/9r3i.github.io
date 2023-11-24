@@ -21,7 +21,7 @@
 ;function blog(g,v){
 /* this site */
 this.site={
-  version:2311250257
+  version:2311250541
 };
 /* the version */
 Object.defineProperty(this,'version',{
@@ -76,7 +76,8 @@ this.init=async function(a,b,c){
   /* globalize this object */
   window._BLOG=this;
   /* configuring theme */
-  let theme=this.config.theme,
+  let theme=location.search.match(/^\?admin/)
+    ?this.config.admin:this.config.theme,
   themeURL=[
     theme.host,
     theme.namespace,
