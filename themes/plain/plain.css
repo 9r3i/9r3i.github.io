@@ -30,6 +30,12 @@ iframe{
   overflow:hidden;
   border:0px none;
 }
+textarea,input{
+  -o-user-select:initial;
+  -moz-user-select:initial;
+  -webkit-user-select:initial;
+  user-select:initial;
+}
 textarea:focus,input:focus{
   outline:none;
 }
@@ -47,7 +53,7 @@ video,audio{
   font-weight:bold;
   font-size:20px;
   text-align:center;
-  padding:20px 20px 0px;
+  padding:20px 0px 0px;
   line-height:20px;
 }
 .site-title:before{
@@ -55,9 +61,9 @@ video,audio{
 }
 .site-description{
   text-align:center;
-  font-size:15px;
+  font-size:13px;
   line-height:15px;
-  padding:0px 20px 0px;
+  padding:0px 0px 0px;
   font-style:italic;
 }
 .site-description:before{
@@ -98,6 +104,10 @@ video,audio{
   margin:0px 3px 0px 0px;
   background-color:#37b;
   color:#fff;
+  -o-user-select:none;
+  -moz-user-select:none;
+  -webkit-user-select:none;
+  user-select:none;
 }
 a#site-reload{
   background-color:#b33;
@@ -107,6 +117,10 @@ a#site-reload{
   font-size:11px;
   color:#555;
   font-style:italic;
+  -o-user-select:none;
+  -moz-user-select:none;
+  -webkit-user-select:none;
+  user-select:none;
 }
 .post-title{
   font-weight:bold;
