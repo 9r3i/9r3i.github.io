@@ -21,7 +21,7 @@
 ;function blog(g,v){
 /* this site */
 this.site={
-  version:2311240809
+  version:2311241348
 };
 /* the version */
 Object.defineProperty(this,'version',{
@@ -153,8 +153,20 @@ this.init=async function(a,b,c){
 };
 /* request data */
 this.requestData=async function(table){
-  let data=await this.db.request(table);
-  return data&&typeof data==='object'?data:{};
+  let data={},
+  host='https://api.github.com/repos',
+  limit=this.db.config.host==host?0x64:1;
+  for(let page=1;page<=limit;page++){
+    let temp=await this.db.request(table);
+    if(temp&&typeof temp==='object'){
+      data={...data,...temp};
+      if(Object.keys(temp).length<30){
+        break;
+      }
+    }else{
+      break;
+    }
+  }return data;
 };
 /* testing code */
 this.test=function(a,b,c){
@@ -270,10 +282,10 @@ this.config=cnf;
 this.blog=blg;
 /* initialize -- as constructor */
 this.init=function(){
-
+  
 };
 /* request */
-this.request=async function(table){
+this.request=async function(table,page){
   table=typeof table==='string'
     &&this.config.tables.hasOwnProperty(table)
     ?table:'posts';
@@ -286,7 +298,7 @@ this.request=async function(table){
   if(this.config.file){
     path.push(this.config.file);
   }
-  let url=path.join('/');
+  let url=path.join('/')+(page?'?page='+page:'');
   /* gaino.xhr fetch */
   if(this.config.fetch=='xhr'
     ||this.config.fetch=='gaino'){
