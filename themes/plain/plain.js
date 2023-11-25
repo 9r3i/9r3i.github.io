@@ -88,6 +88,8 @@ return this.init();
         return 'Total: '+_ENV.searchCount()+' posts';
       }else if(_GET.hasOwnProperty('reload')){
         return '';
+      }else if(_GET.hasOwnProperty('admin')){
+        return 'Admin Page';
       }else if(!_GET.hasOwnProperty('id')){
         return 'Total: '+_GLOBAL.tags.total+' tags';
       }
@@ -113,6 +115,8 @@ return this.init();
         text='Search'+(_GET.search==''?'':': '+_GET.search);
       }else if(_GET.hasOwnProperty('reload')){
         return 'Reloading...';
+      }else if(_GET.hasOwnProperty('reload')){
+        return 'Login';
       }else if(!_GET.hasOwnProperty('id')){
         text=_GLOBAL.site.description;
       }else{
@@ -132,6 +136,8 @@ return this.init();
         return _ENV.main();
       }else if(_GET.hasOwnProperty('reload')){
         return '<progress></progress>';
+      }else if(_GET.hasOwnProperty('admin')){
+        return _ENV.login();
       }else if(!_GET.hasOwnProperty('id')){
         let helper=new PlainHelper,
         tagName=_BLOG.config.theme.mainTagName,
@@ -153,6 +159,9 @@ return this.init();
       let helper=new PlainHelper,
       content=helper.contentLink(post.content,post.assets);
       return helper.contentFindTags(content);
+    },
+    login:function(){
+      return 'login form ...\n<input />';
     },
     search:function(){
       let tagName=_GET.hasOwnProperty('search')?_GET.search:'',

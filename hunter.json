@@ -1,0 +1,67 @@
+{
+  "version": 231125.1017,
+  "name": "hunter.json",
+  "virtual": {
+    "file": "libs/virtual.min.js"
+  },
+  "files": {
+    "gaino.js": "libs/gaino.min.js",
+    "router.js": "libs/router.min.js",
+    "parser.js": "libs/parser.min.js",
+    "blog.js": "libs/blog.min.js",
+    "loader.txt": "libs/loader.txt",
+    "sample.js": "libs/sample.js"
+  },
+  "gaino": {
+    "load": [
+      "router.js",
+      "parser.js",
+      "loader.txt",
+      "blog.js"
+    ],
+    "start": {
+      "class": "blog",
+      "method": "init",
+      "args": [
+        "alpha",
+        "beta",
+        "charlie"
+      ]
+    }
+  },
+  "config": {
+    "blog": {
+      "save": true,
+      "default": "BlogDatabaseDriver",
+      "performTest": false
+    },
+    "database": {
+      "driver": "BlogDatabaseDriver",
+      "host": "https://api.github.com/repos",
+      "username": "9r3i",
+      "password": "___PUBLIC_TOKEN___",
+      "name": "gaino-blog-data",
+      "tables": {
+        "posts": "releases",
+        "authors": "releases/download/1.0.0/authors.json"
+      },
+      "file": null,
+      "fetch": "browser",
+      "expires": "Fri, Nov 23 2024"
+    },
+    "theme": {
+      "host": "themes",
+      "namespace": "plain",
+      "templates": {
+        "footer": "templates/footer.min.js",
+        "main": "templates/main.html"
+      },
+      "save": true,
+      "files": [
+        "plain.min.css",
+        "plain.min.js"
+      ],
+      "mainTagName": "1.0.0"
+    }
+  }
+}

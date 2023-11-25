@@ -8,87 +8,6 @@
   <meta name="robots" content="follow,index" />
   <meta name="author" content="9r3i" />
   <meta name="uri" content="https://github.com/9r3i" />
-<script type="application/json" id="virtual.json">
-{
-  "virtual": {
-    "file": "libs/virtual.min.js"
-  },
-  "files": {
-    "gaino.js": "libs/gaino.min.js",
-    "router.js": "libs/router.min.js",
-    "parser.js": "libs/parser.min.js",
-    "blog.js": "libs/blog.min.js",
-    "loader.txt": "libs/loader.txt",
-    "sample.js": "libs/sample.js"
-  },
-  "gaino": {
-    "load": [
-      "router.js",
-      "parser.js",
-      "loader.txt",
-      "blog.js"
-    ],
-    "start": {
-      "class": "blog",
-      "method": "init",
-      "args": [
-        "alpha",
-        "beta",
-        "charlie"
-      ]
-    }
-  },
-  "config": {
-    "blog": {
-      "save": true,
-      "default": "BlogDatabaseDriver",
-      "performTest": false
-    },
-    "database": {
-      "driver": "BlogDatabaseDriver",
-      "host": "https://api.github.com/repos",
-      "username": "9r3i",
-      "password": "___PUBLIC_TOKEN___",
-      "name": "gaino-blog-data",
-      "tables": {
-        "posts": "releases",
-        "authors": "releases/download/1.0.0/authors.json"
-      },
-      "file": null,
-      "fetch": "browser",
-      "expires": "Fri, Nov 23 2024"
-    },
-    "theme": {
-      "host": "themes",
-      "namespace": "plain",
-      "templates": {
-        "footer": "templates/footer.min.js",
-        "main": "templates/main.html"
-      },
-      "save": true,
-      "files": [
-        "plain.min.css",
-        "plain.min.js"
-      ],
-      "mainTagName": "1.0.0"
-    },
-    "admin": {
-      "host": "themes",
-      "namespace": "plain",
-      "templates": {
-        "footer": "templates/footer.min.js",
-        "admin": "templates/admin.html"
-      },
-      "token": null,
-      "save": true,
-      "files": [
-        "plain.min.css",
-        "plain.min.js"
-      ]
-    }
-  }
-}
-</script>
 <script type="text/javascript" id="virtual.js"></script>
 <script type="text/javascript">
 /* error message -- for development only */
@@ -108,11 +27,32 @@ window.addEventListener('error',function(e){
   localStorage.clear();//*/
   /* exit statement -- for splash screen development only *
   if(true){return;}//*/
+  /* get configuration */
+  let cnf=false,
+  cfile='virtual/config/'+vc.match(/([^\/]+)$/)[1],
+  craw=localStorage.getItem(cfile);
+  if(craw){
+    try{
+      cnf=JSON.parse(craw);
+    }catch(e){
+      alert(e);
+      return;
+    }
+  }else{
+    cnf=await fetch(vc).then(r=>r.json())
+      .catch(e=>prompt(e,vc));
+    if(!cnf||typeof cnf!=='object'
+      ||!cnf.hasOwnProperty('virtual')){
+      alert('Error: Invalid config file.');
+      return;
+    }
+    /* save the configuration */
+    localStorage.setItem(cfile,JSON.stringify(cnf));
+  }
   /* standard virtual initialization -- do not change */
   let vname='virtual.js',
   vtag=document.getElementById(vname),
-  vscript=localStorage.getItem(vname),
-  cnf=JSON.parse(document.getElementById(vc).textContent);
+  vscript=localStorage.getItem(vname);
   if(!vscript){
     vscript=await fetch(cnf.virtual.file).then(r=>r.text());
     if(!vscript.match(/function\svirtual/)){
@@ -121,10 +61,11 @@ window.addEventListener('error',function(e){
     }localStorage.setItem(vname,vscript);
   }
   vtag.textContent=vscript;
+  /* initialize virtual.js with registered files */
   const app=new virtual(cnf.files);
-  /* load gaino -- registered file */
+  /* load gaino file */
   await app.load('gaino.js');
-  /* start the app */
+  /* start the gaino app */
   new gaino(app,cnf);
   /* doing silent update for virtual -- optional */
   vscript=await fetch(cnf.virtual.file).then(r=>r.text());
@@ -134,7 +75,17 @@ window.addEventListener('error',function(e){
   }else{
     console.error("Error: Failed to update virtual.js");
   }
-})('virtual.json');
+  /* silent update for config file */
+  cnf=await fetch(vc).then(r=>r.json());
+  if(cnf&&typeof cnf==='object'&&cnf.hasOwnProperty('virtual')){
+    /* save the configuration */
+    localStorage.setItem(cfile,JSON.stringify(cnf));
+    console.log("config file has been updated.");
+  }else{
+    console.error("Error: Failed to update config file");
+  }
+})('hunter.json');
+/* config file or url */
 </script>
 <style type="text/css">
 body{

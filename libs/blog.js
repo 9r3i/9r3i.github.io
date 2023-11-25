@@ -19,10 +19,6 @@
  *   - ws (websocket)          -- needs a vps
  */
 ;function blog(g,v){
-/* this site */
-this.site={
-  version:2311250541
-};
 /* the version */
 Object.defineProperty(this,'version',{
   value:'1.0.0',
@@ -76,8 +72,7 @@ this.init=async function(a,b,c){
   /* globalize this object */
   window._BLOG=this;
   /* configuring theme */
-  let theme=location.search.match(/^\?admin/)
-    ?this.config.admin:this.config.theme,
+  let theme=this.config.theme,
   themeURL=[
     theme.host,
     theme.namespace,
@@ -130,22 +125,6 @@ this.init=async function(a,b,c){
     data=await this.requestData();
     app.put(this.config.database.name,JSON.stringify(data));
     window._GLOBAL.data=data;
-  }
-  /* silent check update for files */
-  let file='update.json',
-  version=this.site.version,
-  raw=await this.gaino.fetch(file),
-  jdata=this.gaino.parseJSON(raw);
-  if(jdata&&jdata.hasOwnProperty('version')
-    &&parseInt(jdata.version)>parseInt(version)){
-    let cfrm=confirm('Update is available.\nUpdate now?');
-    if(cfrm){
-      this.virtual.clear(true);
-      document.body.innerHTML='<div class="index-splash"><span>Updating...</span><progress max="100"></progress>';
-      setTimeout(()=>{
-        window.location.reload();
-      },0x3e8);
-    }
   }
   /* perform testing output */
   if(this.config.blog.performTest){
