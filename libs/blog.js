@@ -35,15 +35,42 @@ Object.defineProperty(this,'gaino',{
   writable:false,
 });
 /* the config */
-this.config=g.config.config;
+this.config={};
 /* initialize as constructor */
-this.init=async function(a,b,c){
-  let app=this.virtual;
-  /* delete from virtual, 
-   * so its gonna be loaded for new update */
-  if(!this.config.blog.save){
-    app.delete('blog.js');
+this.init=async function(chost){
+  let app=this.virtual,
+  cfile=chost.match(/([^\/]+)$/)[1];
+  app.files[cfile]=chost,
+  craw=app.get(cfile);
+  if(!craw){
+    craw=await app.update(cfile);
   }
+  this.config=this.gaino.parseJSON(craw);
+  if(!this.config||typeof this.config!=='object'
+    ||!this.config.hasOwnProperty('performTest')
+    ||!this.config.hasOwnProperty('database')
+    ||!this.config.hasOwnProperty('theme')
+    ||!this.config.hasOwnProperty('loader')
+    ){
+    app.delete(cfile);
+    alert('Error: Invalid config file.');
+    return;
+  }
+  /* perform testing output */
+  if(this.config.performTest){
+    this.test(...arguments);
+  }else{
+    /* start the blog */
+    this.start();
+  }
+  /* doing silent self update,
+   * and also update for config file */
+  await app.update('blog.js');
+  await app.update(cfile);
+};
+/* start the blog */
+this.start=async function(a,b,c){
+  let app=this.virtual;
   /* put loader */
   /* initialize database */
   let driver=this.config.database.driver
@@ -101,7 +128,7 @@ this.init=async function(a,b,c){
   /* load all theme files */
   for(let file of theme.files){
     let fileURL=themeURL+file,
-    vfile=prefix+'files/'+file,
+    vfile=prefix+file,
     text=await app.get(vfile);
     if(!text||!theme.save){
       count++;
@@ -125,10 +152,6 @@ this.init=async function(a,b,c){
     data=await this.requestData();
     app.put(this.config.database.name,JSON.stringify(data));
     window._GLOBAL.data=data;
-  }
-  /* perform testing output */
-  if(this.config.blog.performTest){
-    this.test(...arguments);
   }
 };
 /* request data */
@@ -211,8 +234,7 @@ this.loaderImage=function(){
 };
 /* loader url -- static */
 this.loaderURL=function(){
-  let url=this.virtual.get('loader.txt');
-  return url?url:'';
+  return this.config.loader;
 };
 };
 

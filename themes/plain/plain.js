@@ -278,7 +278,6 @@ return this.init();
 ;function PlainHelper(){
 this.version='1.0.0';
 window._PlainHelper=this;
-
 this.dataPosts=function(data){
 let posts={};
 for(let post of Object.values(data)){
@@ -401,8 +400,8 @@ this.contentLink=function(content,assets){
   gptrni=/\[embed:(https:\/\/github\.com\/[^:]+):([a-z0-9]+)\]/i,
   iptrn=/\[image:(https?:\/\/[^:]+):([a-z0-9]+)\]/ig,
   iptrni=/\[image:(https?:\/\/[^:]+):([a-z0-9]+)\]/i,
-  ptrn=/\[(audio|video|image|frame):([^\]:]+)(:[^\]]+)?\]/ig,
-  ptrni=/\[(audio|video|image|frame):([^\]:]+)(:[^\]]+)?\]/i,
+  ptrn=/\[(audio|video|image|frame|text):([^\]:]+)(:[^\]]+)?\]/ig,
+  ptrni=/\[(audio|video|image|frame|text):([^\]:]+)(:[^\]]+)?\]/i,
   lptrn=/\[link:(https?:\/\/[^:]+):([^\]]+)\]/ig,
   lptrni=/\[link:(https?:\/\/[^:]+):([^\]]+)\]/i;
   return content.replace(ptrn,function(akur){
@@ -438,6 +437,22 @@ this.contentLink=function(content,assets){
         +'<div id="'+asset.name+'">'
         +'<iframe style="height:'+height+';" src="'
         +(asset.relfo?asset.relfo:url)
+        +'"></iframe> '
+        +'<button onclick="_PlainHelper.fullscreen(this)" '
+        +'data-frame="'+asset.name+'"a>Fullscreen</button>'
+        +'</div>';
+    }else if(m[1]=='text'){
+      let furl=asset.relfo?asset.relfo:url,
+      turl=_BLOG.config.theme.host,
+      xurl=turl+'/plain/templates/reader.html'
+        +'?url='+encodeURIComponent(furl)
+        +'&title='+encodeURIComponent(asset.name),
+      height=m[3]?m[3].substr(1):'400px';
+      return '<a href="'+url+'" target="_blank">'
+        +'[text:'+asset.name+']</a>'
+        +'<div id="'+asset.name+'">'
+        +'<iframe style="height:'+height+';" src="'
+        +xurl
         +'"></iframe> '
         +'<button onclick="_PlainHelper.fullscreen(this)" '
         +'data-frame="'+asset.name+'"a>Fullscreen</button>'
@@ -532,6 +547,9 @@ this.htmlBase=function(link){
   return '<!DOCTYPE html><html lang="en-US" dir="ltr"><head><meta http-equiv="content-type" content="text/html;charset=utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" /><title>9r3i\\github::embed</title></head><body style="margin:0px;padding:0px;"><script src="https://emgithub.com/embed-v2.js?target='
     +encodeURIComponent(link)
     +'&style=atom-one-dark&type=code&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=on"></script></body></html>';
+};
+this.textBase=function(title,url){
+  return '';
 };
 };
 

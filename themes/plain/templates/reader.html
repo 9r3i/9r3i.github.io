@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en-US" dir="ltr"><head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>... &#8213; Text Reader</title>
+  <meta name="description" content="Private Engine, Text Reader" />
+  <meta name="keywords" content="reader, engine" />
+  <meta name="robots" content="no follow,no index" />
+  <meta name="author" content="9r3i" />
+  <meta name="uri" content="https://github.com/9r3i" />
+  <meta name="generator" content="TextReader" />
+  <meta name="version" content="2.1.0" />
+<style tyle="text/css" media="screen,print">
+*{margin:0px;padding:0px;font-family:consolas,monospace;font-weight:normal;font-style:normal;color:#333;}
+body{background-color:#eed;overflow-x:hidden;padding:0px;}
+a{text-decoration:none;color:#37b;}a:hover{color:#7b3;}
+#index{margin:0px auto;max-width:777px;border:1px solid #bbb;background-color:#fff;overflow-x:hidden;}
+#header{padding:5px;font-weight:bold;}
+.file-each:hover{background-color:#eed;}
+.file-each{padding:5px;border-top:1px dotted #bbb;cursor:default;}
+.file-each span.file-size{float:right;color:#999;}
+.file-content{padding:5px;border-top:1px solid #bbb;cursor:default;white-space:pre-wrap;overflow-x:hidden;}
+#title{padding:5px;text-align:center;}
+#copyright{padding:5px;text-align:center;}
+.font-size{padding:0px;border-bottom:1px dotted #bbb;cursor:default;}
+.table{}
+.table td{text-align:center;font-weight:bold;cursor:default;padding:7px;}
+.table td:hover{background-color:#eed;}
+#font_size_minus:before{content:"-";}
+#font_size_plus:before{content:"+";}
+#font_size_current{width:20%;border-left:1px dotted #bbb;border-right:1px dotted #bbb;width}
+#font_size_plus,#font_size_minus{width:40%;}
+</style>
+</head><body>
+<div id="title">Text Reader</div>
+<div id="index">
+<div class="font-size"><table cellspacing="0" cellpadding="0" width="100%" border="0" class="table"><tbody><tr>
+<td id="font_size_plus" onclick="setFontSize(1)"></td>
+<td id="font_size_current"></td>
+<td id="font_size_minus" onclick="setFontSize(-1)"></td>
+</tr></tbody></table></div>
+<div id="header">Loading...</div>
+<div id="content" class="file-content">
+  <div style="font-size:16px;text-align:center;padding:50px 5px;">
+    <img src="data:image/gif;base64,R0lGODlhEAALAPQAAP///wAAANra2tDQ0Orq6gYGBgAAAC4uLoKCgmBgYLq6uiIiIkpKSoqKimRkZL6+viYmJgQEBE5OTubm5tjY2PT09Dg4ONzc3PLy8ra2tqCgoMrKyu7u7gAAAAAAAAAAACH5BAkLAAAAIf4aQ3JlYXRlZCB3aXRoIGFqYXhsb2FkLmluZm8AIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAALAAAFLSAgjmRpnqSgCuLKAq5AEIM4zDVw03ve27ifDgfkEYe04kDIDC5zrtYKRa2WQgAh+QQJCwAAACwAAAAAEAALAAAFJGBhGAVgnqhpHIeRvsDawqns0qeN5+y967tYLyicBYE7EYkYAgAh+QQJCwAAACwAAAAAEAALAAAFNiAgjothLOOIJAkiGgxjpGKiKMkbz7SN6zIawJcDwIK9W/HISxGBzdHTuBNOmcJVCyoUlk7CEAAh+QQJCwAAACwAAAAAEAALAAAFNSAgjqQIRRFUAo3jNGIkSdHqPI8Tz3V55zuaDacDyIQ+YrBH+hWPzJFzOQQaeavWi7oqnVIhACH5BAkLAAAALAAAAAAQAAsAAAUyICCOZGme1rJY5kRRk7hI0mJSVUXJtF3iOl7tltsBZsNfUegjAY3I5sgFY55KqdX1GgIAIfkECQsAAAAsAAAAABAACwAABTcgII5kaZ4kcV2EqLJipmnZhWGXaOOitm2aXQ4g7P2Ct2ER4AMul00kj5g0Al8tADY2y6C+4FIIACH5BAkLAAAALAAAAAAQAAsAAAUvICCOZGme5ERRk6iy7qpyHCVStA3gNa/7txxwlwv2isSacYUc+l4tADQGQ1mvpBAAIfkECQsAAAAsAAAAABAACwAABS8gII5kaZ7kRFGTqLLuqnIcJVK0DeA1r/u3HHCXC/aKxJpxhRz6Xi0ANAZDWa+kEAA7" /> Loading...</div>
+</div>
+</div>
+<div id="copyright">Powered by <a href="https://github.com/9r3i" target="_blank" title="9r3i">9r3i</a></div>
+<script type="text/javascript">
+(async function(){
+  let size=getCookie('font-size'),
+  cfs=document.getElementById('font_size_current'),
+  header=document.getElementById('header'),
+  query=parseQuery(location.search.substr(1)),
+  el=document.getElementById('content');
+  size=size?size:'13px';
+  document.body.style.fontSize=size;
+  cfs.innerText=size;
+  header.innerText=query.title;
+  let content=await fetch(query.url)
+    .then(r=>r.text())
+    .catch(e=>e);
+  el.innerText=content;
+})();
+function parseQuery(query){
+  let res={},
+  spl=query.split('&');
+  for(let row of spl){
+    let lok=row.split('=');
+    res[decodeURIComponent(lok[0])]=decodeURIComponent(lok[1]);
+  }return res;
+}
+function setFontSize(n){
+  n=typeof n==='number'&&n!==NaN?parseInt(n):0;
+  let bs=parseInt(document.body.style.fontSize);
+  bs+=n;
+  let size=bs+'px';
+  setCookie('font-size',size,30);
+  document.body.style.fontSize=size;
+  document.getElementById('font_size_current').innerText=size;
+}
+function setCookie(cname,cvalue,exdays){
+  let d=new Date();
+  d.setTime(d.getTime()+(exdays*24*60*60*1000));
+  var expires="expires="+d.toGMTString();
+  /* BlackBerry browser v5 doesn't support document.cookie */
+  document.cookie=cname+"="+cvalue+"; "+expires;
+}
+function getCookie(cname){
+  let name=cname+"=",
+  ca=document.cookie.split(';');
+  for(let i=0;i<ca.length;i++){
+    let c=ca[i].trim();
+    if(c.indexOf(name)==0)return c.substring(name.length,c.length);
+  }return "";
+}
+</script>
+</body></html>

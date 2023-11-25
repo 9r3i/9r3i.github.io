@@ -7,6 +7,26 @@
  * started at november 21st 2023
  * requires:
  *   - virtual.js - https://github.com/9r3i/virtual.js - v1.0.0
+ * usage: new gaino(virtual object, object config)
+ * sample:
+ * (config object in json)
+  {
+    "load": [
+      "router.js",
+      "parser.js",
+      "blog.js"
+    ],
+    "start": {
+      "class": "blog",
+      "method": "init",
+      "args": [
+        "alpha",
+        "beta",
+        "charlie"
+      ]
+    }
+  }
+ * note: load files must be registered to virtual object
  */
 ;function gaino(v,c){
 /* the version */
@@ -32,19 +52,17 @@ this.init=function(){
       return;
     }
     /* gaino.load */
-    if(cnf.hasOwnProperty('gaino')
-      &&cnf.gaino.hasOwnProperty('load')
-      &&Array.isArray(cnf.gaino.load)){
-      for(let file of cnf.gaino.load){
+    if(cnf.hasOwnProperty('load')
+      &&Array.isArray(cnf.load)){
+      for(let file of cnf.load){
         if(app.files.hasOwnProperty(file)){
           await app.load(file);
         }
       }
     }
     /* gaino.start */
-    if(cnf.hasOwnProperty('gaino')
-      &&cnf.gaino.hasOwnProperty('start')){
-      let start=cnf.gaino.start;
+    if(cnf.hasOwnProperty('start')){
+      let start=cnf.start;
       /* start as string */
       if(typeof start==='string'){
         return eval(start);

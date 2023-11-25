@@ -22,69 +22,71 @@ window.addEventListener('error',function(e){
   console.error(errorText);
 });//*/
 /* anonymous async function */
-(async function(vc){
+(async function(){
   /* clear the storage -- for development only *
   localStorage.clear();//*/
+  
   /* exit statement -- for splash screen development only *
   if(true){return;}//*/
-  /* get configuration */
-  let cnf=false,
-  cfile='virtual/config/'+vc.match(/([^\/]+)$/)[1],
-  craw=localStorage.getItem(cfile);
-  if(craw){
-    try{
-      cnf=JSON.parse(craw);
-    }catch(e){
-      alert(e);
-      return;
+  
+  /* blog config host file */
+  const CONFIG_FILE="hunter.json";
+  
+  /**
+   * prepare for registered files
+   * note: do not change the keys
+   */
+  const REGISTERED_FILES={
+    "gaino.js": "libs/gaino.min.js",
+    "router.js": "libs/router.min.js",
+    "parser.js": "libs/parser.min.js",
+    "blog.js": "libs/blog.min.js"
+  };
+  
+  /* virtual host file */
+  const VIRTUAL_HOST = "libs/virtual.min.js";
+  
+  /* gaino config -- do not change */
+  const GAINO_CONFIG={
+    "load": [
+      "router.js",
+      "parser.js",
+      "blog.js"
+    ],
+    "start": {
+      "class": "blog",
+      "method": "init",
+      "args": [
+        CONFIG_FILE
+      ]
     }
-  }else{
-    cnf=await fetch(vc).then(r=>r.json())
-      .catch(e=>prompt(e,vc));
-    if(!cnf||typeof cnf!=='object'
-      ||!cnf.hasOwnProperty('virtual')){
-      alert('Error: Invalid config file.');
-      return;
-    }
-    /* save the configuration */
-    localStorage.setItem(cfile,JSON.stringify(cnf));
-  }
+  };
+  
   /* standard virtual initialization -- do not change */
   let vname='virtual.js',
   vtag=document.getElementById(vname),
-  vscript=localStorage.getItem(vname);
+  vscript=localStorage.getItem('virtual/'+vname);
   if(!vscript){
-    vscript=await fetch(cnf.virtual.file).then(r=>r.text());
+    vscript=await fetch(VIRTUAL_HOST).then(r=>r.text());
     if(!vscript.match(/function\svirtual/)){
       alert('Error: Failed to load virtual.js');
       return;
-    }localStorage.setItem(vname,vscript);
+    }
   }
+  /* execute the virtual script */
   vtag.textContent=vscript;
   /* initialize virtual.js with registered files */
-  const app=new virtual(cnf.files);
+  const app=new virtual(REGISTERED_FILES);
+  /* save virtual script */
+  app.put(vname,vscript);
   /* load gaino file */
   await app.load('gaino.js');
   /* start the gaino app */
-  new gaino(app,cnf);
-  /* doing silent update for virtual -- optional */
-  vscript=await fetch(cnf.virtual.file).then(r=>r.text());
-  if(vscript.match(/function\svirtual/)){
-    localStorage.setItem(vname,vscript);
-    console.log("virtual has been updated.");
-  }else{
-    console.error("Error: Failed to update virtual.js");
-  }
-  /* silent update for config file */
-  cnf=await fetch(vc).then(r=>r.json());
-  if(cnf&&typeof cnf==='object'&&cnf.hasOwnProperty('virtual')){
-    /* save the configuration */
-    localStorage.setItem(cfile,JSON.stringify(cnf));
-    console.log("config file has been updated.");
-  }else{
-    console.error("Error: Failed to update config file");
-  }
-})('hunter.json');
+  new gaino(app,GAINO_CONFIG);
+  /* doing silent self update for virtual.js */
+  app.files[vname]=VIRTUAL_HOST;
+  await app.update(vname);
+})();
 /* config file or url */
 </script>
 <style type="text/css">
