@@ -8,7 +8,7 @@
  *   - virtual.js - https://github.com/9r3i/virtual.js - v1.0.0
  *   - gaino.js   - https://github.com/9r3i/gaino.js   - v1.0.0
  *   - router.js  - https://github.com/9r3i/router.js  - v2.0.2
- *   - parser.js  - https://github.com/9r3i/parser     - v1.2.6
+ *   - parser.js  - https://github.com/9r3i/parser.js  - v1.2.6
  *   - 
  *   - 
  *   - github api (module)     -- free
