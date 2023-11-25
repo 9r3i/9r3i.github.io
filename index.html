@@ -23,7 +23,7 @@ window.addEventListener('error',function(e){
 });//*/
 /* anonymous async function */
 (async function(){
-  /* clear the storage -- for development only *
+  /* clear the storage -- for development only */
   localStorage.clear();//*/
   
   /* exit statement -- for splash screen development only *
