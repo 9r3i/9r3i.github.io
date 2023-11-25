@@ -35,6 +35,8 @@ textarea,input{
   -moz-user-select:initial;
   -webkit-user-select:initial;
   user-select:initial;
+  font-family:monospace;
+  font-size:13px;
 }
 textarea:focus,input:focus{
   outline:none;
@@ -111,6 +113,28 @@ video,audio{
 }
 a#site-reload{
   background-color:#b33;
+}
+.site-form{
+  position:relative;
+}
+.site-form input[type="text"]{
+  width:calc(100%);
+  margin:0px;
+  padding:10px 15px;
+  background-color:#fff;
+  border:1px solid #bbb;
+}
+.site-form input[type="submit"]{
+  margin:0px;
+  padding:10px 15px;
+  background-color:#37b;
+  color:#fff;
+  border:1px solid #bbb;
+  position:absolute;
+  right:0px;
+}
+.site-form input[type="submit"]:hover{
+  background-color:#26a;
 }
 /* post */
 .post-detail{

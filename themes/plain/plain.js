@@ -115,8 +115,8 @@ return this.init();
         text='Search'+(_GET.search==''?'':': '+_GET.search);
       }else if(_GET.hasOwnProperty('reload')){
         return 'Reloading...';
-      }else if(_GET.hasOwnProperty('reload')){
-        return 'Login';
+      }else if(_GET.hasOwnProperty('admin')){
+        return 'Admin';
       }else if(!_GET.hasOwnProperty('id')){
         text=_GLOBAL.site.description;
       }else{
@@ -137,7 +137,7 @@ return this.init();
       }else if(_GET.hasOwnProperty('reload')){
         return '<progress></progress>';
       }else if(_GET.hasOwnProperty('admin')){
-        return _ENV.login();
+        return _GLOBAL.templates.login;
       }else if(!_GET.hasOwnProperty('id')){
         let helper=new PlainHelper,
         tagName=_BLOG.config.theme.mainTagName,
@@ -161,12 +161,14 @@ return this.init();
       return helper.contentFindTags(content);
     },
     login:function(){
-      return 'login form ...\n<input />';
+      alert('ok')
+      return '[this is _ENV.login()]';
     },
     search:function(){
       let tagName=_GET.hasOwnProperty('search')?_GET.search:'',
       res='<input class="search-input" type="text" '
-        +'value="'+tagName+'" id="search-input" />\n\n',
+        +'value="'+tagName+'" id="search-input" '
+        +'placeholder="Search..." />\n\n',
       keys=Object.keys(_GLOBAL.posts).reverse();
       if(tagName==''){
         res+='<div id="search-result"></div>';

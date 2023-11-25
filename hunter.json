@@ -20,12 +20,13 @@
     "namespace": "plain",
     "templates": {
       "footer": "templates/footer.min.js",
+      "login": "templates/login.html",
       "main": "templates/main.html"
     },
-    "save": true,
+    "save": false,
     "files": [
-      "plain.min.css",
-      "plain.min.js"
+      "plain.css",
+      "plain.js"
     ],
     "mainTagName": "1.0.0"
   },

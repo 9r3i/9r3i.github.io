@@ -284,7 +284,7 @@ this.config=cnf;
 this.blog=blg;
 /* initialize -- as constructor */
 this.init=function(){
-  
+  this.options={};
 };
 /* request */
 this.request=async function(table,page){
@@ -304,18 +304,17 @@ this.request=async function(table,page){
   /* gaino.xhr fetch */
   if(this.config.fetch=='xhr'
     ||this.config.fetch=='gaino'){
-    let opt={
-      error:function(e){
+    if(!this.options.hasOwnProperty('error')){
+      this.options.error=function(e){
         prompt(e,url);
-      }
-    },
-    res=await this.blog.gaino.fetch(url,opt),
-    data=this.blog.gaino.parseJSON(res);
-    return data;
+      };
+    }
+    let res=await this.blog.gaino.fetch(url,this.options);
+    return this.blog.gaino.parseJSON(res);
   }
   /* browser fetch */
   else if(this.config.fetch=='browser'){
-    let res=await fetch(url,{})
+    let res=await fetch(url,this.options)
       .then(r=>r.json())
       .catch(e=>prompt(e,url));
     return res;
