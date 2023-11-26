@@ -28,7 +28,7 @@ if(_BLOG.db.config.host=='https://api.github.com/repos'){
   /* prepare global posts -- default */
   _GLOBAL.posts=_GLOBAL.data;
 }
-_GLOBAL.total=Object.keys(_GLOBAL.posts).length;
+_GLOBAL.total=Object.keys(_GLOBAL.data).length;
 
 /* prepare tags */
 _GLOBAL.tags=(new PlainHelper).tags(_GLOBAL.posts);
@@ -88,6 +88,8 @@ return this.init();
         return 'Total: '+_ENV.searchCount()+' posts';
       }else if(_GET.hasOwnProperty('reload')){
         return '';
+      }else if(_GET.hasOwnProperty('test')){
+        return 'Testing...';
       }else if(_GET.hasOwnProperty('admin')){
         return 'Admin Page';
       }else if(!_GET.hasOwnProperty('id')){
@@ -115,6 +117,8 @@ return this.init();
         text='Search'+(_GET.search==''?'':': '+_GET.search);
       }else if(_GET.hasOwnProperty('reload')){
         return 'Reloading...';
+      }else if(_GET.hasOwnProperty('test')){
+        return 'Testing...';
       }else if(_GET.hasOwnProperty('admin')){
         return 'Admin';
       }else if(!_GET.hasOwnProperty('id')){
@@ -136,6 +140,8 @@ return this.init();
         return _ENV.main();
       }else if(_GET.hasOwnProperty('reload')){
         return '<progress></progress>';
+      }else if(_GET.hasOwnProperty('test')){
+        return 'Testing...';
       }else if(_GET.hasOwnProperty('admin')){
         let token=_BLOG.virtual.get('token.reg');
         if(_GET.admin=='logout'){
@@ -167,6 +173,9 @@ return this.init();
       }
       let helper=new PlainHelper,
       content=helper.contentLink(post.content,post.assets);
+      if(_BLOG.config.theme.show_assets){
+        content+=helper.assetsList(post.assets);
+      }
       return helper.contentFindTags(content);
     },
     admin:async function(token){
@@ -293,10 +302,10 @@ return this.init();
       }
       res+='\n\n<pre class="post-each">';
       if(page>1){
-        res+='<a href="?page='+(page-1)+'">[Previous]</a>  ';
+        res+='<a href="?recent&page='+(page-1)+'">[Previous]</a>  ';
       }
       if(count>=limit){
-        res+='<a href="?page='+(page+1)+'">[Next]</a>  ';
+        res+='<a href="?recent&page='+(page+1)+'">[Next]</a>  ';
       }
       res+='</pre>';
       return res;
@@ -311,6 +320,25 @@ return this.init();
       let parse=new parser;
       return parse.likeJSON(...arguments);
     },
+    testing:function(){
+      let parse=new parser,
+      res=[];
+      _BLOG.db.request('posts',1)
+        .then(r=>{
+          res=[...res,...Object.values(r)];
+          _BLOG.db.request('posts',2)
+            .then(rr=>{
+              res=[...res,...Object.values(rr)];
+              let ros=[];
+              for(let i in res){
+                ros.push(res[i].name);
+              }
+              document.body.innerHTML='<pre>'
+                +parse.likeJSON(ros,5)+'</pre>';
+            });
+        });
+      return '';
+    },
   }
 };
 
@@ -322,6 +350,21 @@ return this.init();
 ;function PlainHelper(){
 this.version='1.0.0';
 window._PlainHelper=this;
+this.assetsList=function(assets){
+  let res='<div class="assets">'
+    +'<div class="assets-title">Assets</div>';
+  for(let name in assets){
+    let url=assets[name].url,
+    size=Math.ceil(assets[name].size/1024),
+    tsize=size<1024?size+'kb'
+      :Math.ceil(size/1024)+'mb';
+    res+='<div class="assets-each">'
+      +'<a target="_blank" href="'+url
+      +'" title="download:'+name
+      +'">[download:'+name+':'+tsize+']</a></div>';
+  }res+='</div>';
+  return res;
+};
 this.headers=function(token){
   return {
     "Accept": "application/vnd.github+json",
@@ -367,7 +410,9 @@ for(let post of Object.values(data)){
     assets,
   };
   if(post.hasOwnProperty('tag_name')
-    &&post.tag_name.match(/^\d+\.\d+\.\d+$/)){
+    &&post.tag_name.match(/^\d+\.\d+\.\d+$/)
+    &&post.tag_name==_BLOG.config.theme.mainTagName
+    ){
     _GLOBAL.mainPosts[post.tag_name]=posts[post.id];
     delete posts[post.id];
   }
@@ -453,6 +498,8 @@ this.contentLink=function(content,assets){
   iptrni=/\[image:(https?:\/\/[^:]+):([a-z0-9]+)\]/i,
   ptrn=/\[(audio|video|image|frame|text):([^\]:]+)(:[^\]]+)?\]/ig,
   ptrni=/\[(audio|video|image|frame|text):([^\]:]+)(:[^\]]+)?\]/i,
+  tptrn=/\!\[([^\]]*)\]\(([^\)]+)\)/ig,
+  tptrni=/\!\[([^\]]*)\]\(([^\)]+)\)/i,
   lptrn=/\[link:(https?:\/\/[^:]+):([^\]]+)\]/ig,
   lptrni=/\[link:(https?:\/\/[^:]+):([^\]]+)\]/i;
   return content.replace(ptrn,function(akur){
@@ -511,6 +558,18 @@ this.contentLink=function(content,assets){
     }
     return '<a href="'+url+'" title="'+asset.name
       +'" target="_blank">'+akur+'</a>';
+  }).replace(tptrn,function(m){
+    let im=m.match(tptrni),
+    ilink=m,
+    ialt=m;
+    if(im){
+      ilink=im[2];
+      ialt=im[1];
+    }
+    return '<a href="'+ilink+'" title="'+ialt+'" target="_blank">'
+      +'<img src="'+ilink+'" alt="'
+      +ialt+'" style="max-width:100%;" width="100%" />'
+      +'</a>';
   }).replace(iptrn,function(m){
     let im=m.match(iptrni),
     ilink=m,
@@ -601,6 +660,33 @@ this.htmlBase=function(link){
 };
 this.textBase=function(title,url){
   return '';
+};
+/* testing code */
+this.test=function(a,b,c){
+  let parse=new parser,
+  loaded=[],
+  sc=document.querySelectorAll('script[id]');
+  for(let i=0;i<sc.length;i++){
+    loaded.push(sc[i].id);
+  }
+  document.body.innerHTML='<pre>'
+    +'[loaded.files]\n'
+    +parse.likeJSON(loaded)
+    +'\n\n'
+    +'[stored.files]\n'
+    +parse.likeJSON(this.virtual.list(true))
+    +'\n\n'
+    +'[config]\n'
+    +parse.likeJSON(this.config,3)
+    +'\n\n'
+    +'[args]\n'
+    +parse.likeJSON({arguments},5)
+    +'\n\n'
+    +'[this]\n'
+    +parse.likeJSON(this,5)
+    +'\n\n'
+    +'</pre>'
+    +'';
 };
 };
 

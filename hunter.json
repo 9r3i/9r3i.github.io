@@ -28,6 +28,7 @@
       "plain.min.js"
     ],
     "save": true,
+    "show_assets": true,
     "mainTagName": "1.0.0"
   },
   "performTest": false,
