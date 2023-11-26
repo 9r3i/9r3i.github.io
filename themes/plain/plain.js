@@ -137,7 +137,16 @@ return this.init();
       }else if(_GET.hasOwnProperty('reload')){
         return '<progress></progress>';
       }else if(_GET.hasOwnProperty('admin')){
-        return _GLOBAL.templates.login;
+        let token=_BLOG.virtual.get('token.reg');
+        if(_GET.admin=='logout'){
+          _BLOG.virtual.delete('token.reg');
+          _BLOG.route.go('?admin');
+        }else if(token){
+          setTimeout(async function(){
+            return await _ENV.admin(token);
+          },100);
+          return '';
+        }return _GLOBAL.templates.login;
       }else if(!_GET.hasOwnProperty('id')){
         let helper=new PlainHelper,
         tagName=_BLOG.config.theme.mainTagName,
@@ -160,8 +169,41 @@ return this.init();
       content=helper.contentLink(post.content,post.assets);
       return helper.contentFindTags(content);
     },
-    login:function(){
-      alert('ok')
+    admin:async function(token){
+      let button=document.createElement('input'),
+      pc=document.querySelector('pre[class="post-content"]');
+      _BLOG.db.options.headers=(new PlainHelper).headers(token);
+      button.type='submit';
+      button.value='Logout';
+      button.classList.add('button-logout');
+      button.onclick=function(e){
+        return _BLOG.route.go('?admin=logout');
+      };
+      pc.innerText='hooray! login...\n\n'+token+'\n\n';
+      pc.appendChild(button);
+    },
+    login:async function(submit){
+      let parent=submit.parentNode,
+      regToken=_BLOG.virtual.get('token.reg'),
+      token=document.querySelector('input[name="token"]');
+      token.disabled=true;
+      submit.disabled=true;
+      submit.value='Connecting...';
+      /* testing token */
+      _BLOG.db.options.headers=
+        (new PlainHelper).headers(token.value);
+      let res=await _BLOG.db.request('posts');
+      if(res&&typeof res==='object'&&res[0]
+        &&res[0].hasOwnProperty('id')
+        &&res[0].hasOwnProperty('tag_name')
+        ){
+        _BLOG.virtual.put('token.reg',token.value);
+        return await _ENV.admin(token.value);
+      }
+      token.disabled=false;
+      submit.disabled=false;
+      submit.value='Connect';
+      prompt('Error: Invalid token.',JSON.stringify(res));
       return '[this is _ENV.login()]';
     },
     search:function(){
@@ -280,6 +322,13 @@ return this.init();
 ;function PlainHelper(){
 this.version='1.0.0';
 window._PlainHelper=this;
+this.headers=function(token){
+  return {
+    "Accept": "application/vnd.github+json",
+    "Authorization": "Bearer "+token,
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+};
 this.dataPosts=function(data){
 let posts={};
 for(let post of Object.values(data)){
