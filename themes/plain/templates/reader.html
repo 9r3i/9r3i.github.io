@@ -2,7 +2,7 @@
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <title>... &#8213; Text Reader</title>
+  <title>... &#8213; TextReader</title>
   <meta name="description" content="Private Engine, Text Reader" />
   <meta name="keywords" content="reader, engine" />
   <meta name="robots" content="no follow,no index" />
@@ -20,9 +20,9 @@ a{text-decoration:none;color:#37b;}a:hover{color:#7b3;}
 .file-each{padding:5px;border-top:1px dotted #bbb;cursor:default;}
 .file-each span.file-size{float:right;color:#999;}
 .file-content{padding:5px;border-top:1px solid #bbb;cursor:default;white-space:pre-wrap;overflow-x:hidden;}
-#title{padding:5px;text-align:center;}
+#title{padding:5px;text-align:center;border-bottom:1px solid #bbb;margin-top:30px;}
 #copyright{padding:5px;text-align:center;}
-.font-size{padding:0px;border-bottom:1px dotted #bbb;cursor:default;}
+.font-size{padding:0px;border-bottom:1px dotted #bbb;cursor:default;position:fixed;z-index:120;top:0px;left:0px;right:0px;width:100%;background-color:#fff;}
 .table{}
 .table td{text-align:center;font-weight:bold;cursor:default;padding:7px;}
 .table td:hover{background-color:#eed;}
@@ -32,13 +32,13 @@ a{text-decoration:none;color:#37b;}a:hover{color:#7b3;}
 #font_size_plus,#font_size_minus{width:40%;}
 </style>
 </head><body>
-<div id="title">Text Reader</div>
 <div id="index">
 <div class="font-size"><table cellspacing="0" cellpadding="0" width="100%" border="0" class="table"><tbody><tr>
 <td id="font_size_plus" onclick="setFontSize(1)"></td>
 <td id="font_size_current"></td>
 <td id="font_size_minus" onclick="setFontSize(-1)"></td>
 </tr></tbody></table></div>
+<div id="title">Text Reader</div>
 <div id="header">Loading...</div>
 <div id="content" class="file-content">
   <div style="font-size:16px;text-align:center;padding:50px 5px;">
@@ -56,7 +56,13 @@ a{text-decoration:none;color:#37b;}a:hover{color:#7b3;}
   size=size?size:'13px';
   document.body.style.fontSize=size;
   cfs.innerText=size;
-  header.innerText=query.title;
+  if(!query.hasOwnProperty('url')){
+    header.innerText='Error';
+    el.innerText='Error: Require URL.';
+    return;
+  }
+  header.innerText=query.hasOwnProperty('title')?query.title
+    :query.url.split('?')[0].match(/[^\/]+$/);
   let content=await fetch(query.url)
     .then(r=>r.text())
     .catch(e=>e);

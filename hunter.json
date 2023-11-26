@@ -23,11 +23,11 @@
       "login": "templates/login.html",
       "main": "templates/main.html"
     },
-    "save": true,
     "files": [
       "plain.min.css",
       "plain.min.js"
     ],
+    "save": true,
     "mainTagName": "1.0.0"
   },
   "performTest": false,
