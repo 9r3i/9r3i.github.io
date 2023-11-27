@@ -16,7 +16,7 @@
     "expires": "Fri, Nov 23 2024"
   },
   "theme": {
-    "host": "themes",
+    "host": "https://raw.githubusercontent.com/9r3i/plain.js",
     "namespace": "plain",
     "templates": {
       "footer": "templates/footer.min.js",
