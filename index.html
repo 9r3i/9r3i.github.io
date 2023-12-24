@@ -23,23 +23,35 @@ window.addEventListener('error',function(e){
 });//*/
 /* anonymous async function */
 (async function(){
-  /* clear the storage -- for development only *
+  /* clear the storage -- for development only --
+   * uncomment this if there's something wrong with script
+   * it's gonna wipe all virtual file that was stored on storage
+   *
   localStorage.clear();//*/
   
-  /* exit statement -- for splash screen development only *
+  /* exit statement -- for splash screen development only 
+   * uncomment this if you wanna modified the splash screen
+   *
   if(true){return;}//*/
   
-  /* blog config host file */
-  const CONFIG_FILE="hunter.json";
+  /* blog config host file
+   * we wrote this file in previous section
+   */
+  const CONFIG_FILE="https://raw.githubusercontent.com/9r3i/mdown.js/mdown/hunter.json";
   
   /**
    * prepare for registered files
    * note: do not change the keys
+   * example host:
+   * https://raw.githubusercontent.com/9r3i/gaino.js/master
    */
   const REGISTERED_FILES={
     "gaino.js": "https://raw.githubusercontent.com/9r3i/gaino.js/master/gaino.min.js",
     "router.js": "https://raw.githubusercontent.com/9r3i/router.js/master/router.min.js",
     "parser.js": "https://raw.githubusercontent.com/9r3i/parser.js/master/parser.min.js",
+    "eloader.css": "https://raw.githubusercontent.com/9r3i/eloader.js/master/eloader.min.css",
+    "eloader.js": "https://raw.githubusercontent.com/9r3i/eloader.js/master/eloader.min.js",
+    "locale.js": "https://raw.githubusercontent.com/9r3i/locale.js/master/locale.min.js",
     "blog.js": "https://raw.githubusercontent.com/9r3i/blog.js/master/blog.min.js"
   };
   
@@ -51,6 +63,9 @@ window.addEventListener('error',function(e){
     "load": [
       "router.js",
       "parser.js",
+      "eloader.css",
+      "eloader.js",
+      "locale.js",
       "blog.js"
     ],
     "start": {
@@ -83,9 +98,12 @@ window.addEventListener('error',function(e){
   await app.load('gaino.js');
   /* start the gaino app */
   new gaino(app,GAINO_CONFIG);
-  /* doing silent self update for virtual.js */
+  /* doing silent self update for virtual.js 
+   * uncomment this if you wanna make virtual.js auto-update
+   *
   app.files[vname]=VIRTUAL_HOST;
   await app.update(vname);
+  /* end-of-script */
 })();
 </script>
 <style type="text/css">
