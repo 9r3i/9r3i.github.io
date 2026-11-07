@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="en-US" dir="ltr"><head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>9r3i\boot</title>
+  <script id="boot.js"></script>
+  <script>
+/* error message -- for development only */
+window.addEventListener('error',function(e){
+  let errorText=[
+    e.message,
+    'URL: ' + e.filename,
+    'Line: ' + e.lineno + ', Column: ' + e.colno,
+    'Stack: ' + (e.error && e.error.stack || '(no stack trace)')
+  ].join('\n');
+  alert(errorText);
+  console.error(errorText);
+});//*/
+/* GLOBALS VARIABLES */
+const GLOBALS={
+  //host:'http://127.0.0.1:9301/', // host of admin request (mia host)
+  host:'https://raw.githubusercontent.com/9r3i/mia/master/public/', // host of admin request (mia host)
+  welcome:3, // post id for welcome page
+  fakeloader:false, // using fake loader in every start
+  haltstart:false, // do halt at start
+  /* blog elements */
+  main:null,
+  title:null,
+  path:null,
+  nav:null,
+  content:null,
+  footer:null,
+};
+/* anonymous async function */
+(async function(){
+  /* execute the boot script */
+  let bname='boot.js',
+  bhost='files/js/boot.js',
+  btag=document.getElementById(bname),
+  bscript=await fetch(bhost).then(r=>r.text());
+  if(!bscript||!bscript.match(/function\sboot/)){
+    alert('Error: Failed to load boot.js');
+    return;
+  }btag.textContent=bscript;
+  /* load files */
+  // https://github.com/9r3i/static/archive/refs/heads/master.zip
+  // https://codeload.github.com/9r3i/static/zip/refs/heads/master
+  let host='https://raw.githubusercontent.com/9r3i/mia/master/public/files/',
+  //let host='https://rawfo.vercel.app/9r3i/mia/master/public/files/',
+  //let host='https://relfo.vercel.app/9r3i/static/mia.test.01/',
+  //let host='https://sabunjelly.com/files/cleanjelly/',
+  //let host='https://sabunjelly.com/files/image/jpeg/',
+  //let host='http://127.0.0.1:9301/files/',
+  app=new boot(host),
+  files=[
+    /**/
+    'css/consola.css',
+    'css/segoeuil.css',
+    'css/mia.css',
+    'css/mblog.css',
+    'css/atom-one-light.css',
+    'js/mia.js',
+    'js/parser.js',
+    'js/boot.js',
+    'js/idb.js',
+    'js/highlight.min.js',
+    'js/mblog.js',
+    //*/
+    /**
+    'mia.css',
+    'mblog.css',
+    'mia.js',
+    'parser.js',
+    'mblog.js',
+    //*/
+    /**
+    'badr-battle-field-01.jpg',
+    'badr-battle-field-02.jpg',
+    'badr-battle-field-03.jpg',
+    'badr-battle-field-04.jpg',
+    'badr-battle-field-05.jpg',
+    //*/
+  ],
+  file='spanduk.jpg',
+  progress=document.querySelector('.progress'),
+  span=document.querySelector('span'),
+  loaded=await app.bulk(files,e=>{
+    if(e.total&&e.total>0){
+      progress.setAttribute('max',e.total);
+      progress.setAttribute('value',e.loaded);
+      span.innerText=Math.floor(e.loaded/e.total*100)
+        +'% Loading...';
+    }else{
+      span.innerText=Math.floor(e.loaded/1024)+'KB - Loading...';
+    }
+  });
+  span.innerText='Completed -- '+(typeof loaded);
+  return new mblog;
+})();
+  </script>
+</head><body>
+<div class="splash">
+  <span>Connecting...</span>
+  <div class="progress-bar">
+    <div class="progress" max="100"></div>
+  </div>
+</div>
+<style>
+/* splash */
+.splash{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  width:100vw;
+  margin:0rem;
+  padding:0rem;
+  font-family:system-ui;
+  background-color:#fff;
+  background:linear-gradient(#fff 0%,#def 100%);
+  transition:all 0.3s ease 0s;
+}
+.splash span{
+  position:absolute;
+  margin:-2rem 0rem 0rem;
+  font-size:0.75rem;
+  color:#777;
+  animation:fade 2.3s infinite 0s;
+  transition:all 0.3s ease 0s;
+}
+@keyframes fade{
+  0%{opacity:1;padding-left:0rem;font-size:0.7rem;color:#777;}
+  50%{opacity:0.3;padding-left:0.2rem;font-size:0.75rem;color:#37b;}
+  100%{opacity:1;padding-left:0rem;font-size:0.7rem;color:#777;}
+}
+/* progress */
+.progress-bar{
+  --color:#37b; /* the progress color */
+  --background: lightgrey; /* the background color */
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  border:none;
+  width:12.5rem;
+  height:0.5rem;
+  margin:0rem 0.625rem;
+  border-radius:10em;
+  background:var(--background);
+  overflow:hidden;
+}
+.progress-bar .progress{
+  border-radius:10em;
+  background:var(--color);
+  width:0%;
+  height:0.5rem;
+}
+.progress-bar .progress:not([value]){
+  width:12%;
+  animation:listening 1.7s infinite 0s;
+}
+.progress-bar .progress[value]{
+  width:calc(attr(value number,0) / attr(max number,100) * 12.5rem);
+}
+@keyframes listening{
+  0%{margin-left:-10%;}
+  50%{margin-left:98%;}
+  100%{margin-left:-10%;}
+}
+</style>
+</body></html>
